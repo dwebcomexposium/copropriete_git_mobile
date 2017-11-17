@@ -1,0 +1,30 @@
+@media only screen and (-webkit-min-device-pixel-ratio: 2), not all {
+.bloc-visiteurs a img {
+    opacity: 1;
+}
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2), not all {
+header .logo_texte {
+    background-image: url(img/logo_salon_copro_txt_2018.jpg);
+    background-repeat: no-repeat;
+    background-size: 70px 70px;
+}
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2), not all {
+header .logo_texte img {
+    opacity: 0;
+ height: 70px;
+}
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2), not all
+{
+header .dateSalon {
+    background-image: url(img/date-mob-2018.jpg);
+    background-repeat: no-repeat;
+    background-size: 338px 20px;
+}
+}
+
