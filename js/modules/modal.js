@@ -44,7 +44,7 @@
 
             // Bind methods.
             this.update = modalBind(this.update, this);
-            this.onResize = modalBind(this.onResize, this);
+            //this.onResize = modalBind(this.onResize, this);
             this.init = modalBind(this.init, this);
             this.clear = modalBind(this.clear, this);
 
@@ -62,7 +62,7 @@
             var self = this;
 
             // Events...
-            $('body').on('click.cxpModal', this.handler.selector, function(e) {
+            $('html').on('click.cxpModal', this.handler.selector, function(e) {
                 // Update modal target related to the handler (link)
                 self.modaltarget = $($(this).data('modaltarget'));
                 // Call to show the modal
@@ -151,7 +151,7 @@
             $target.width(newWidth);
 
             // modal center
-            $target.css("top", 0);
+            $target.css( 'top', 0 );
             $target.css("margin-top", function() {
                 return ($(window).height() - $target.height()) / 2;
             });
@@ -159,7 +159,8 @@
                 return 0 - ($target.width() / 2);
             });
         };
-        // Main method
+
+        // Main method: showing/opening
         cxpModal.prototype.showModal = function() {
 
             // Closure
@@ -167,14 +168,14 @@
             var $body = $('body');
             var $window = $(window);
 
-            //Store the predefined Modal size
+            // Store the predefined Modal size
             this.modaltarget.data('MaxSize', {
                 "h": this.modaltarget.height(),
                 "w": this.modaltarget.width()
             });
 
             // resize on show
-            self.onResize();
+            //self.onResize(); @BUGFIX iOS 8.x fires a resize event when it's going to hide controls after scrolling, even if it finally decides not to hide them. This made the modal have an height of 0
 
             // Show the element
             this.modaltarget.show().attr('aria-hidden', 'false');
@@ -281,19 +282,9 @@
                 this.modaltarget.find('.modal-content').addClass('js-no-minheight');
             }
 
-            // var modalHeightModalContent = this.modaltarget.find('.modal-content').height();
-
-            // 2 type of modals are managed: with Tabs and Pane (then each Pane can have a scrollbar) or without (general case: content can have a scrollbar)
-            // @TODO Very specific ("TDG" project)!
-            var modalHeightModalTabs = 0;
-            if (this.modaltarget.find('.tabstrip-tabs').length > 0) {
-                modalHeightModalTabs = this.modaltarget.find('.tabstrip-tabs').height();
-                this.modaltarget.find('.tabstrip-pane').css('top', modalHeightModalTabs + modalHeightModalTitle + 15); // @NOTE 15 is the top padding on Tabs
-            }
-
-            $window.on('resize',function() {
-                self.onResize();
-            });
+            // $window.on('resize',function() {
+            //     self.onResize();
+            // });
 
             // END custom
 
@@ -387,12 +378,13 @@
 
       $('.contact-element-id').val(cieID);
       $('.js-contact-cie').text(cieName);
-    }
+    };
 
 })(jQuery);
 
-// Launch
+// Initialize modal components
 jQuery(document).ready(function($) {
+
     "use strict";
     if ( $('.modalopen').length ) {
       $('.modalopen').cxpModal();

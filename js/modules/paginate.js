@@ -13,7 +13,7 @@
   function pagination_change(e) {
 
     // Vars
-    var separator = '?'; // @PROD edit to '/'
+    var separator = '?page='; // @PROD edit to '/'
     var $this = $(this);
     var page = $this.data('page');
     if(page===undefined) return true; // Don't disturb true links (not page links)
@@ -81,6 +81,10 @@
     $('.pagin-grids-next, .pagin-next',$pagination_container).toggleClass('is-inactive',page===pagemax);
     $('.pagin-grids-prev, .pagin-prev',$pagination_container).toggleClass('is-inactive',page<=1);
 
+    // Hide next/previous text links if not needed
+    $('.pagin-next',$pagination_container).toggleClass('visually-hidden',page==pagemax).toggleClass('is-visible',page!=pagemax);
+    $('.pagin-prev',$pagination_container).toggleClass('visually-hidden',page==1).toggleClass('is-visible',page!=1);
+
     // CSS classes
     $('li', $pagination_container).removeClass('is-active');
     $link.closest('li').addClass('is-active');
@@ -104,23 +108,49 @@
         $pagination_container.data('pushState', true);
       }
 			*/
+
+      // Load the contents via AJAX request
       $target_container.load(url, function() {
         // Scroll top top of content
         var top = $pagination_container.offset().top - 10 - $('.site-banner').outerHeight();
         if(top) $('body,html').animate({
           scrollTop:top
         },'fast');
+
+        // Trigger an event to allow other scripts/plugins to be notified (ex : library)
+        $pagination_container.trigger('pagechange');
+
       });
     } else {
-      console.log('Target container not found for pagination');
+      if(typeof console!=='undefined') {
+        console.error('Target container not found for pagination');
+      }
     }
   }
 
   // Pagination plugin
   $.fn.cxpPagination = function() {
+
     $(this).each(function() {
+
       $(this).on('click', 'a', pagination_change);
+
+      // Init
+      var page = -1;
+      var pagemax = $(this).data('page-max');
+
+      var $activeItem = $(this).find('.pagin-item.is-active');
+      if($activeItem.length>0) {
+        page = parseInt($activeItem.children('a:first').data('page'));
+      }
+      if(page<0) page = 1;
+
+      // Hide next/previous text links if not needed
+      if(pagemax && page==pagemax) $(this).find('.pagin-next').addClass('visually-hidden');
+      if(page==1) $(this).find('.pagin-prev').addClass('visually-hidden');
+
     });
+
   };
 
   $('.cxp-pagination').cxpPagination();

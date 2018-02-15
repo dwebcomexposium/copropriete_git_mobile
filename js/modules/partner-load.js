@@ -2,7 +2,7 @@
  partner_load
 
  	Little plugin for get in AJAX partner list and add it in the view
-	We can show or hide the new ellements
+	We can show or hide the new elements
 
  @contributors: Guillaume Focheux (Alsacréations)
  @date-created: 2015-04-24

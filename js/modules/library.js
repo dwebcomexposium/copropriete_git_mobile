@@ -2,16 +2,20 @@
  Library
  Library module with Cart in local storage
 
- @contributors: Guillaume (Alsacréations)
+ @contributors: Guillaume (Alsacréations), Rodolphe
  @date-created: 2015-05-20
- @last-update: 2015-05-21
+ @last-update: 2016-02-05
  */
 
 (function($) {
 
     $.cxpLibrary = function(el, options) {
 
-        var defaults = {};
+        var defaults = {
+            // @PROD : Edit real AJAX request URL here
+            downloadurl:'dev/ajax/library-download.php'
+        };
+
         var plugin = this;
         plugin.settings = {};
         var $element = $(el),
@@ -29,6 +33,7 @@
 
         // Plugin initialization
         plugin.init = function() {
+
             plugin.settings = $.extend({}, defaults, options);
             plugin.lsGet();
             if ($element.find('.lb-js-folder').length > 0) {
@@ -43,8 +48,9 @@
 
             return true;
         };
-        // LocalStorage Action
-        //get
+
+        // LocalStorage Actions
+        // get
         plugin.lsGet = function() {
             var cartRaw = cxpStorage.getItem(lsPrefix + id);
             if (cartRaw !== null) {
@@ -53,16 +59,19 @@
                 plugin.lsSet();
             }
         };
-        //set
+
+        // set
         plugin.lsSet = function() {
             var cartRaw = JSON.stringify(cart);
             cxpStorage.setItem(lsPrefix + id, cartRaw);
         };
-        //remove
+
+        // remove
         plugin.lsRemove = function() {
             cxpStorage.removeItem(lsPrefix + id);
         };
 
+        // length
         plugin.getLength = function(folder) {
             if (folder !== undefined) {
                 if (cart.folders[folder] === undefined) {
@@ -87,6 +96,7 @@
 
             //Update length for the button inside modal
         };
+
         var updateFoldersInfos = function() {
             var $folders = $('.lb-js-folder');
 
@@ -102,6 +112,8 @@
             });
 
         };
+
+        // Check the items if they are stored in the cart
         var updateItemsInfos = function() {
             var $items = $('.lb-js-item');
             $items.each(function() {
@@ -113,8 +125,8 @@
                     $(this).find('.lb-select-list-link').removeClass('is-checked');
                 }
             });
-
         };
+
         var updateTotalLength = function() {
             var TotalLength = 0;
             $.each(cart.items, function() {
@@ -122,35 +134,57 @@
             });
             $modal.find('.lb-js-modal-download .lb-js-total').text(TotalLength);
         };
+
         // Event Handlers on HTML components inside the plugin
         var registerEvents = function() {
-            //event check
-            $element.on('click', '.lb-js-item-checkbox', plugin.itemAction);
-            $element.on('click', '.lb-select-list-link', plugin.itemPreview);
-            $element.on('click', '.lb-js-btn', plugin.regenModalAction);
-            $modal.on('click', '.lb-js-modal-drop-all', plugin.resetCartAction);
-            $modal.on('click', '.lb-js-modal-btn-drop-item', plugin.deleteFromCartAction);
+
+            $element.on('click.library', '.lb-js-item-checkbox', plugin.itemAction);
+            $element.on('click.library', '.lb-select-list-link', plugin.itemPreview); // Galery previews
+            $element.on('click.library', '.lb-js-btn', plugin.regenModalAction); // Download basket
+            $modal.on('click.library', '.lb-js-modal-drop-all', plugin.resetCartAction);
+            $modal.on('click.library', '.lb-js-modal-btn-drop-item', plugin.deleteFromCartAction);
+
+            // If there is a pagination
+            $element.on('pagechange','.cxp-pagination', function() {
+                updateItemsInfos();
+            });
+
+            // Download link
+            $modal.on('click.library','.lb-js-modal-download', function(e) {
+                // Temporary hidden form to build a POST request
+                var $form = $('<form>').attr({ "target": "_blank", "id": "downloadForm", "method": "POST", "action": plugin.settings.downloadurl }).hide();
+                // For each cart item we use a hidden input field to POST the id
+                $.each(cart.items, function() {
+                    $form.append('<input type="hidden" name="files[]" value="'+this.itemId+'">');
+                });
+                $('body').append($form);
+                $form.submit();
+                setTimeout(function() {
+                    $form.remove(); // Remove the temporary form
+                },3000);
+            });
+
         };
+
         // Actions
 
-        //Update modal's content (folder and item)
+        // Update cart modal content (folder and items)
         plugin.regenModalAction = function(e) {
             var nbItem = plugin.getLength(),
                 $modalContent = $modal.find('.lb-js-modal-content'),
                 $template = $('#tpl-lb-js-modal-content').html();
-            var cft = plugin.prepareCartForTemplate(); //Cart For Template
+            var cft = plugin.prepareCartForTemplate(); // Cart template
             if (nbItem > 0) {
-                $('.lb-js-modal-drop-all').show();
-                $('.lb-js-modal-download').show();
+                $('.lb-js-modal-drop-all, .lb-js-modal-download').show();
                 $modalContent.html($.mustache($template, cft));
             } else {
-                $('.lb-js-modal-drop-all').hide();
-                $('.lb-js-modal-download').hide();
+                $('.lb-js-modal-drop-all, .lb-js-modal-download').hide();
                 $('.lb-js-modal-content').html('<p>Le panier est vide.</p>');
             }
             updateTotalLength();
         };
-        //Item checkbox click
+
+        // Item checkbox click
         plugin.itemAction = function() {
             if ($(this).prop("checked")) {
                 plugin.addToCart($(this));
@@ -162,10 +196,11 @@
             updateItemsInfos();
             updateTotalLength();
         };
-        //Item Image click
+
+        // Item click to display big modal preview
         plugin.itemPreview = function() {
-            //Update modal content
-            //console.log('Go Update Modal!');
+
+            // Update modal window contents
             var $item = $(this).closest('.lb-js-item');
 
             $modalPreview.find('.lp-item-title').text($(this).find('.lb-select-list-title').text());
@@ -180,12 +215,17 @@
                 $modalPreview.find('.lp-js-item-btn-remove').hide();
             }
 
-            $modalPreview.find('.lp-item-img').prop('src', $item.data("itemPreview"));
-            $modalPreview.find('.lp-item-img').prop('alt', $item.data("itemName"));
-            //binding
-            $modalPreview.find('.lp-js-item-btn').off('click').on('click', function(e) {
+            // Iframe or img ?
+            if($item.data("itemIframe")) {
+                $('.lp-item-preview',$modalPreview).html('<iframe class="lp-item-iframe" src="'+$item.data("itemSrc")+'" style="border:0" scrolling="no"></iframe>');
+            } else {
+                $('.lp-item-preview',$modalPreview).html('<img class="lp-item-img" src="'+$item.data("itemPreview")+'" alt="'+$item.data("itemName")+'">');
+            }
+
+            // Binding
+            $modalPreview.find('.lp-js-item-btn').off('click.library').on('click.library', function(e) {
                 e.preventDefault();
-                $item.find('.lb-js-item-checkbox').trigger('click');
+                $item.find('.lb-js-item-checkbox').trigger('click.library');
                 if ($item.find('.lb-js-item-checkbox').is(":checked")) {
                     $modalPreview.find('.lp-js-item-btn-add').hide();
                     $modalPreview.find('.lp-js-item-btn-remove').show();
@@ -194,12 +234,16 @@
                     $modalPreview.find('.lp-js-item-btn-remove').hide();
                 }
             });
-        // resize Img after loading it
-            $modalPreview.find('.lp-item-img').hide();
-            $modalPreview.find('.lp-item-img').load( plugin.resizeImgAction);
-            $modalPreview.find('.lp-item-img').fadeIn('50');
+
+            // resize img after load
+            var $img = $modalPreview.find('.lp-item-img');
+            if($img.length>0) {
+                $img.hide().load(plugin.resizeImgAction).fadeIn('50');
+            }
+
         };
-        // reset Cart
+
+        // Reset Cart
         plugin.resetCartAction = function(e) {
             e.preventDefault();
             cart = {
@@ -237,49 +281,44 @@
         };
         // Remove from selection
         plugin.removeFromCart = function($elem) {
+            var itemData;
             if ($elem.hasClass('lb-js-modal-btn-drop-item')) {
-                var itemData = cart.items[$elem.data('itemId')];
+                itemData = cart.items[$elem.data('itemId')];
             } else {
-                var itemData = $elem.closest('.lb-js-item').data();
+                itemData = $elem.closest('.lb-js-item').data();
             }
             delete cart.items[itemData.itemId];
             delete cart.folders[itemData.itemFolderId][itemData.itemId];
         };
 
+        // Populate data with checked items in order to build mustache template
         plugin.prepareCartForTemplate = function() {
-            var cft = []; //Cart For Template
-            // Loop for get clean JSON for templating
+            var cft = []; // Cart For Template
+            // Loop to get JSON data
             Object.keys(cart.folders).forEach(function(folderKey) {
-                var tempItemsArray = [];
+                var items = [];
                 var folderName = '';
+                var folder = '';
                 Object.keys(cart.folders[folderKey]).forEach(function(itemKey) {
-                    tempItemsArray.push(cart.folders[folderKey][itemKey]);
-                    folderName = cart.folders[folderKey][itemKey]['itemFolderName'];
+                    items.push(cart.folders[folderKey][itemKey]);
+                    folderName = cart.folders[folderKey][itemKey].itemFolderName;
                 });
-                var tmp = '{ "folderId":"' + folderKey + '","folderName":"' + folderName + '", "items":' + JSON.stringify(tempItemsArray) + ' }';
-
-                cft.push(JSON.parse(tmp));
+                folder = '{ "folderId":"' + folderKey + '","folderName":"' + folderName + '", "items":' + JSON.stringify(items) + ' }';
+                cft.push(JSON.parse(folder));
             });
-
 
             return JSON.parse('{"folders":' + JSON.stringify(cft) + '}');
         };
 
+        // Resize image
         plugin.resizeImgAction = function(e) {
             var $img = $modalPreview.find('.lp-item-img'),
-                $modal = $modalPreview,
-                modalHeight = $modal.height() - parseInt($img.css('marginTop')),
-                modalWidth = $modal.width(),
+                //$modal = $modalPreview,
+                modalHeight = $modalPreview.height() - parseInt($img.css('marginTop')),
+                modalWidth = $modalPreview.width(),
                 imgHeight = $img[0].naturalHeight,
                 imgWidth = $img[0].naturalWidth,
                 imgMaxHeight = modalHeight;
-
-
-            //  console.log('imgMaxHeight : ' + imgMaxHeight);
-            //  console.log('imgHeight : ' + imgHeight);
-            //  console.log('imgWidth : ' + imgWidth);
-            //  console.log('modalWidth : ' + modalWidth);
-            //  console.log('modalHeight : ' + modalHeight);
 
              var newHeight = 0,
                  newWitdh = 0,
@@ -308,13 +347,6 @@
                  newHeight = imgHeight;
              }
 
-            // if( imgHeight/imgWidth !== newHeight/newWidth){
-            //     console.log( 'Ratio Error');
-            // }
-
-            // console.log('h/w/ ratio :'+ imgHeight + '/' + imgWidth + '  '+imgHeight/imgWidth +'| new h/w / ratio:' + newHeight +  '/' + newWidth +' /' + newHeight/newWidth );
-
-
             $img.height(newHeight);
             $img.width(newWidth);
             $img.margin = 'auto';
@@ -323,6 +355,7 @@
 
         plugin.init();
     };
+
     $.fn.cxpLibrary = function(options) {
         return this.each(function() {
             if (undefined === $(this).data('cxpLibrary')) {
@@ -331,12 +364,11 @@
             }
         });
     };
+
     $('.lb-js').cxpLibrary();
 
-
-    //For Filter add toggle slide
+    // For Filter add toggle slide
 
     $('.lb-js-filter').toggleSlide();
-
 
 })(jQuery);
