@@ -27,24 +27,19 @@
       plugin.settings = $.extend({}, defaults, options);
       updateSettingsFromHTMLData();
 
-      // Masonry didn't align images verticaly - bug FIX : Added delay of 100 ms
-      setTimeout( function() { 
-
-        if ($element.length > 0) {
-          if ($element.parents('body-corporate').length > 0) {
-            $element.masonry({
-              'itemSelector': '.gal-js-item'
-            });
-          } else { 
-            $element.masonry({
-              'columnWidth': '.gal-item-simple',
-              'itemSelector': '.gal-js-item',
-              'percentPosition': true
-            });
-          }
+      if ($element.length > 0) {
+        if ($element.parents('body-corporate').length > 0) {
+          $element.masonry({
+            'itemSelector': '.gal-js-item'
+          });
+        } else {
+          $element.masonry({
+            'columnWidth': '.gal-item-simple',
+            'itemSelector': '.gal-js-item',
+            'percentPosition': true
+          });
         }
-
-      }, 100);
+      }
 
     };
 
