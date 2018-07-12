@@ -18361,14 +18361,15 @@ div,span{
     header .logo_texte{
         background-image:url(logo_salon_copro_txt_2018.jpg);
         background-repeat:no-repeat;
-        -webkit-background-size:140px 70px;
-                background-size:140px 70px
+        -webkit-background-size:140px 70px !important;
+                background-size:140px 70px !important;
     }
 }
 @media only screen and (-webkit-min-device-pixel-ratio:2),not all{
     header .logo_texte img{
         opacity:1;
-        height:70px
+        height:70px;
+        width: 142px;
     }
 }
 @media only screen and (-webkit-min-device-pixel-ratio:2),not all{
