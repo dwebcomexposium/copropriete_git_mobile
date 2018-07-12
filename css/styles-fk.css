@@ -17375,7 +17375,7 @@ html,.error404{
 }
 @media only screen and (-webkit-min-device-pixel-ratio:2),only screen and (min-device-pixel-ratio:2){
     header .logo_texte img{
-        opacity:0
+        opacity:1
     }
     header .logo_texte{
         background-image:url(img/logo_salon_copro_txtX2.jpg);
@@ -18367,7 +18367,7 @@ div,span{
 }
 @media only screen and (-webkit-min-device-pixel-ratio:2),not all{
     header .logo_texte img{
-        opacity:0;
+        opacity:1;
         height:70px
     }
 }
