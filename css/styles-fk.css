@@ -15270,7 +15270,7 @@ header .linkid70638:hover .icon{
 }
 @media only screen and (-webkit-min-device-pixel-ratio:2),only screen and (min-device-pixel-ratio:2){
     .home-quicklinks .linkid70693 .icon,.home-quicklinks .linkid70692 .icon,.home-quicklinks .linkid70690 .icon,.home-quicklinks .linkid70696 .icon,.liens-thematiques .linkid70698 .icon,.liens-thematiques .linkid70700 .icon,.liens-thematiques .linkid70701 .icon,.liens-thematiques .linkid70702 .icon,.liens-thematiques .linkid70703 .icon,.liens-thematiques .linkid70704 .icon,.liens-thematiques .linkid70705 .icon,.liens-thematiques .linkid70706 .icon,.liens-thematiques .linkid70707 .icon{
-        background-image:url(icones_thematiquesX2.png);
+        background-image:url(img/icones_thematiquesX2.png);
         background-repeat:no-repeat;
         -webkit-background-size:200px 225px;
                 background-size:200px 225px
@@ -18431,7 +18431,7 @@ div#zone4 .block.block-small.quicklinks.home-links-entries {
     -webkit-transform: translateY(-50%);
         -ms-transform: translateY(-50%);
             transform: translateY(-50%);
-    background-image: url(icones_thematiquesX2.png);
+    background-image: url(img/icones_thematiquesX2.png);
     background-repeat: no-repeat;
     background-position: -12px -388px;
 }
