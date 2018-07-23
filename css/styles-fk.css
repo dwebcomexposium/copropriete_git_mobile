@@ -15833,7 +15833,7 @@ header .header_links .quicklinks.home-quicklinks .btn-primary{
     width:115px
 }
 .site-footer .logo{
-    width:60px
+    width:142px;
 }
 .site-footer .logo.main_logo{
     display:none
@@ -18445,4 +18445,58 @@ div#zone4 .block.block-small.quicklinks.home-links-entries {
 #zone1 .bloc-visiteurs .bloc-devenez-membre-club:hover p:before {
     background-color: #ffffff;
     background-position: -73px -388px;
+}
+
+.article a.container_redac {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-content: middle;
+    -ms-flex-line-pack: middle;
+    align-content: middle;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    padding: 10px 20px;
+    -webkit-border-radius: 25px;
+    border-radius: 25px;
+    background-color: #3973a5;
+    color: #fff;
+    text-transform: uppercase;
+    position: relative;
+    margin: 25px auto;
+    max-width: 370px;
+    cursor: pointer;
+    -webkit-transition: all .25s ease-out;
+    -o-transition: all .25s ease-out;
+    transition: all .25s ease-out;
+    border: 1px solid #3973a5;
+    text-align: center;
+    text-decoration: none;
+}
+
+.article a.container_redac:hover {
+    background-color: #fff;
+    color: #3973a5;
+}
+
+.article .block.social-sharing {
+    padding-top: 0;
+}
+
+.footer-quicklinks ul .linkid70650 a {
+    display: none;
+}
+
+.footer-quicklinks ul .linkid70651 {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-quicklinks ul .linkid70651 a {
+    margin: 0;
 }
