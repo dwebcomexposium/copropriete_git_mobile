@@ -28,3 +28,9 @@ header .dateSalon {
 }
 }
 
+
+/********* NEWSLETTER ********/
+
+input[type="checkbox"]:focus {
+    -webkit-appearance: checkbox !important;
+}
