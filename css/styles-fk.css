@@ -17380,14 +17380,14 @@ html,.error404{
     header .logo_texte{
         background-image:url(img/logo_salon_copro_txtX2.jpg);
         background-repeat:no-repeat;
-        -webkit-background-size:70px 70px;
-                background-size:70px 70px
+        -webkit-background-size:cover;
+                background-size:cover
     }
     header .dateSalon{
         background-image:url(img/dateX2.png);
         background-repeat:no-repeat;
-        -webkit-background-size:338px 20px;
-                background-size:338px 20px
+        -webkit-background-size:cover;
+                background-size:cover
     }
     .bloc-visiteurs a img{
         opacity:0
@@ -18376,8 +18376,8 @@ div,span{
     header .dateSalon{
         background-image:url(img/date-mob-2018.jpg);
         background-repeat:no-repeat;
-        -webkit-background-size:338px 20px;
-                background-size:338px 20px
+        -webkit-background-size:cover;
+                background-size:cover
     }
 }
 
