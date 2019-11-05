@@ -24,7 +24,7 @@ header .logo_texte img {
 header .dateSalon {
     background-image: url(img/date-mob-2018.jpg);
     background-repeat: no-repeat;
-    background-size: 338px 20px;
+    background-size: cover;
 }
 }
 
