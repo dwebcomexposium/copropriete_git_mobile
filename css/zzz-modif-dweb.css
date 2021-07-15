@@ -34,3 +34,9 @@ header .dateSalon {
 input[type="checkbox"]:focus {
     -webkit-appearance: checkbox !important;
 }
+
+/**********LOGO SANITAIRE**********/
+
+.lien_macaron_sanitaire img {
+    width: 150px;
+}
